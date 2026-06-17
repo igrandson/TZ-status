@@ -7,61 +7,28 @@ import asyncio
 from app.database import engine, init_db
 from app.models import Service, StatusCheck, OutageReport
 from app.monitor import run_monitor_loop
-
-SEED_SERVICES = [
-    # Government
-    {"name": "NIDA", "category": "government", "url": "https://www.nida.go.tz"},
-    {"name": "TRA", "category": "government", "url": "https://www.tra.go.tz"},
-    {"name": "BRELA", "category": "government", "url": "https://www.brela.go.tz"},
-    {"name": "HESLB", "category": "government", "url": "https://www.heslb.go.tz"},
-    {"name": "eGA / Government Portal", "category": "government", "url": "https://www.ega.go.tz"},
-    {"name": "NHIF", "category": "government", "url": "https://www.nhif.or.tz"},
-    {"name": "NSSF", "category": "government", "url": "https://www.nssf.or.tz"},
-    {"name": "NSSF", "category": "government", "url": "https://www.nssf.go.tz"},
-    {"name": "TCRA", "category": "government", "url": "https://www.tcra.go.tz"},
-    {"name": "Tanzania Railways Corporation", "category": "government", "url": "https://www.trc.co.tz"},
-    {"name": "Ajira Portal", "category": "government", "url": "https://ajira.go.tz"},
-
-    # Banks
-    {"name": "CRDB Bank", "category": "bank", "url": "https://crdbbank.co.tz"},
-    {"name": "NMB Bank", "category": "bank", "url": "https://www.nmbbank.co.tz"},
-    {"name": "NBC Bank", "category": "bank", "url": "https://www.nbc.co.tz"},
-    {"name": "Equity Bank Tanzania", "category": "bank", "url": "https://equitygroupholdings.com/tz"},
-    {"name": "Stanbic Bank Tanzania", "category": "bank", "url": "https://www.stanbicbank.co.tz"},
-    {"name": "DTB Tanzania", "category": "bank", "url": "https://www.dtbtanzania.com"},
-    {"name": "Exim Bank Tanzania", "category": "bank", "url": "https://www.eximbank-tz.com"},
-    {"name": "Akiba Commercial Bank", "category": "bank", "url": "https://www.akibabank.com"},
-    {"name": "Absa Bank Tanzania", "category": "bank", "url": "https://www.absa.co.tz"},
-
-    # Telecom
-    {"name": "Vodacom Tanzania", "category": "telecom", "url": "https://www.vodacom.co.tz"},
-    {"name": "Airtel Tanzania", "category": "telecom", "url": "https://www.airtel.co.tz"},
-    {"name": "TTCL", "category": "telecom", "url": "https://www.ttcl.co.tz"},
-    {"name": "Yas (Tigo)", "category": "telecom", "url": "https://www.yas.co.tz"},
-    {"name": "Halotel", "category": "telecom", "url": "https://www.halotel.co.tz"},
-    {"name": "Zantel", "category": "telecom", "url": "https://www.zantel.co.tz"},
-
-    # Mobile Money / Fintech
-    {"name": "M-Pesa Tanzania", "category": "mobile_money", "url": "https://www.vodacom.co.tz/m-pesa"},
-    {"name": "Mixx by Yas (Tigo Pesa)", "category": "mobile_money", "url": "https://www.yas.co.tz/mixx-by-yas"},
-    {"name": "Airtel Money", "category": "mobile_money", "url": "https://www.airtel.co.tz/airtel-money"},
-    {"name": "Halopesa", "category": "mobile_money", "url": "https://www.halotel.co.tz/halopesa"},
-    {"name": "Selcom", "category": "mobile_money", "url": "https://selcommobile.com"},
-
-    # Popular apps / e-commerce
-    {"name": "Jumia Tanzania", "category": "app", "url": "https://www.jumia.co.tz"},
-    {"name": "Kilimall Tanzania", "category": "app", "url": "https://www.kilimall.co.tz"},
-]
+from app.services_seed import SEED_SERVICES
 
 
 def seed_services():
+    """Insert catalog services missing from the database (matched by URL)."""
     with Session(engine) as session:
-        existing = session.exec(select(Service)).first()
-        if existing:
-            return
-        for s in SEED_SERVICES:
-            session.add(Service(**s))
-        session.commit()
+        existing_urls = {
+            (s.url or "").rstrip("/").lower()
+            for s in session.exec(select(Service)).all()
+        }
+        existing_names = {s.name for s in session.exec(select(Service)).all()}
+        added = 0
+        for entry in SEED_SERVICES:
+            url_key = entry["url"].rstrip("/").lower()
+            if url_key in existing_urls or entry["name"] in existing_names:
+                continue
+            session.add(Service(**entry))
+            existing_urls.add(url_key)
+            existing_names.add(entry["name"])
+            added += 1
+        if added:
+            session.commit()
 
 
 @asynccontextmanager
@@ -96,6 +63,9 @@ def list_services():
         return session.exec(select(Service)).all()
 
 
+DEGRADED_THRESHOLD_MS = 3000  # responses slower than this count as degraded
+
+
 @app.get("/status")
 def current_status():
     with Session(engine) as session:
@@ -107,17 +77,26 @@ def current_status():
                 .where(StatusCheck.service_id == service.id)
                 .order_by(StatusCheck.checked_at.desc())
             ).first()
+
+            if not latest:
+                status = None
+            elif not latest.is_up:
+                status = "down"
+            elif latest.response_time_ms and latest.response_time_ms > DEGRADED_THRESHOLD_MS:
+                status = "degraded"
+            else:
+                status = "up"
+
             result.append({
                 "id": service.id,
                 "service": service.name,
                 "category": service.category,
                 "is_up": latest.is_up if latest else None,
+                "status": status,
+                "response_time_ms": latest.response_time_ms if latest else None,
                 "last_checked": latest.checked_at if latest else None,
             })
         return result
-
-
-@app.post("/report/{service_id}")
 
 
 @app.post("/report/{service_id}")
