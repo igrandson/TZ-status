@@ -19,505 +19,215 @@
     --mono: 'JetBrains Mono', 'Courier New', monospace;
     --sans: -apple-system, 'Segoe UI', system-ui, sans-serif;
   }
-
-{ margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-
-background: var(--bg);
-
-color: var(--text);
-
-font-family: var(--sans);
-
-min-height: 100vh;
-
-}
-.stripe-band {
-
-height: 4px;
-
-background: linear-gradient(
-
-90deg,
-
-var(--green) 0%, var(--green) 33%,
-
-var(--gold) 33%, var(--gold) 66%,
-
-var(--down) 66%, var(--down) 100%
-
-);
-
-}
-header {
-
-padding: 32px 40px 24px;
-
-display: flex;
-
-justify-content: space-between;
-
-align-items: flex-start;
-
-border-bottom: 1px solid var(--line);
-
-}
-.brand h1 {
-
-font-size: 28px;
-
-font-weight: 800;
-
-letter-spacing: -0.5px;
-
-}
-.brand h1 .accent { color: var(--gold); }
-.brand .tagline {
-
-font-size: 13px;
-
-color: var(--muted);
-
-margin-top: 4px;
-
-}
-.clock-box {
-
-text-align: right;
-
-font-family: var(--mono);
-
-}
-.clock-box .time {
-
-font-size: 18px;
-
-font-weight: 600;
-
-color: var(--gold);
-
-}
-.clock-box .date {
-
-font-size: 11px;
-
-color: var(--muted);
-
-margin-top: 2px;
-
-}
-.summary-bar {
-
-display: flex;
-
-gap: 12px;
-
-padding: 24px 40px;
-
-}
-.summary-cell {
-
-flex: 1;
-
-background: var(--panel);
-
-border: 1px solid var(--line);
-
-border-radius: 10px;
-
-padding: 20px 24px;
-
-position: relative;
-
-overflow: hidden;
-
-}
-.summary-cell::before {
-
-content: '';
-
-position: absolute;
-
-top: 0; left: 0;
-
-width: 4px;
-
-height: 100%;
-
-}
-.summary-cell.up::before { background: var(--green); }
-
-.summary-cell.down::before { background: var(--down); }
-
-.summary-cell.total::before { background: var(--gold); }
-.summary-cell .num {
-
-font-family: var(--mono);
-
-font-size: 36px;
-
-font-weight: 700;
-
-}
-.summary-cell.up .num { color: var(--green); }
-
-.summary-cell.down .num { color: var(--down); }
-
-.summary-cell.total .num { color: var(--gold); }
-.summary-cell .label {
-
-font-size: 12px;
-
-text-transform: uppercase;
-
-letter-spacing: 1.2px;
-
-color: var(--muted);
-
-margin-top: 6px;
-
-font-weight: 600;
-
-}
-main {
-
-padding: 8px 40px 40px;
-
-}
-.category-block {
-
-margin-bottom: 32px;
-
-}
-.category-title {
-
-font-size: 13px;
-
-text-transform: uppercase;
-
-letter-spacing: 1.5px;
-
-color: var(--gold);
-
-margin-bottom: 12px;
-
-font-weight: 700;
-
-display: flex;
-
-align-items: center;
-
-gap: 8px;
-
-}
-.category-title::after {
-
-content: '';
-
-flex: 1;
-
-height: 1px;
-
-background: var(--line);
-
-}
-.grid {
-
-display: grid;
-
-grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-
-gap: 12px;
-
-}
-.card {
-
-background: var(--panel);
-
-border: 1px solid var(--line);
-
-border-radius: 10px;
-
-padding: 16px 18px;
-
-cursor: pointer;
-
-transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-
-}
-.card:hover {
-
-transform: translateY(-2px);
-
-border-color: var(--muted);
-
-box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-
-}
-.card.up { box-shadow: inset 3px 0 0 var(--green); }
-
-.card.down { box-shadow: inset 3px 0 0 var(--down); }
-.card .row {
-
-display: flex;
-
-justify-content: space-between;
-
-align-items: center;
-
-}
-.card .name {
-
-font-size: 14px;
-
-font-weight: 600;
-
-}
-.card .dot {
-
-width: 9px;
-
-height: 9px;
-
-border-radius: 50%;
-
-flex-shrink: 0;
-
-}
-.card.up .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
-
-.card.down .dot { background: var(--down); box-shadow: 0 0 8px var(--down); }
-.card .meta {
-
-font-family: var(--mono);
-
-font-size: 11px;
-
-color: var(--muted);
-
-margin-top: 8px;
-
-}
-footer {
-
-text-align: center;
-
-padding: 28px;
-
-color: var(--muted);
-
-font-size: 12px;
-
-font-family: var(--mono);
-
-border-top: 1px solid var(--line);
-
-}
-.loading {
-
-color: var(--muted);
-
-font-family: var(--mono);
-
-padding: 60px;
-
-text-align: center;
-
-font-size: 14px;
-
-}
-.toast {
-
-position: fixed;
-
-bottom: 28px;
-
-right: 28px;
-
-background: var(--panel-raised);
-
-border: 1px solid var(--gold);
-
-color: var(--text);
-
-padding: 14px 22px;
-
-font-size: 13px;
-
-font-weight: 600;
-
-border-radius: 8px;
-
-opacity: 0;
-
-transform: translateY(10px);
-
-transition: opacity 0.2s, transform 0.2s;
-
-pointer-events: none;
-
-box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-
-}
-.toast.show {
-
-opacity: 1;
-
-transform: translateY(0);
-
-}
-.modal-overlay {
-
-display: none;
-
-position: fixed;
-
-top: 0; left: 0; right: 0; bottom: 0;
-
-background: rgba(0,0,0,0.7);
-
-align-items: center;
-
-justify-content: center;
-
-z-index: 100;
-
-backdrop-filter: blur(2px);
-
-}
-.modal-overlay.show { display: flex; }
-.modal {
-
-background: var(--panel-raised);
-
-border: 1px solid var(--line);
-
-border-radius: 14px;
-
-padding: 28px;
-
-width: 500px;
-
-max-width: 90vw;
-
-box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-
-}
-.modal h2 {
-
-font-size: 18px;
-
-font-weight: 700;
-
-margin-bottom: 18px;
-
-}
-.modal .chart {
-
-display: flex;
-
-align-items: flex-end;
-
-gap: 3px;
-
-height: 130px;
-
-margin: 16px 0;
-
-border-bottom: 1px solid var(--line);
-
-padding-bottom: 4px;
-
-}
-.modal .bar {
-
-flex: 1;
-
-background: var(--gold);
-
-min-height: 2px;
-
-border-radius: 3px 3px 0 0;
-
-transition: background 0.15s;
-
-}
-.modal .bar:hover { background: var(--green); }
-.modal .bar-label {
-
-font-family: var(--mono);
-
-font-size: 9px;
-
-color: var(--muted);
-
-text-align: center;
-
-margin-top: 4px;
-
-}
-.modal .chart-wrap {
-
-display: flex;
-
-flex-direction: column;
-
-}
-.modal .actions {
-
-display: flex;
-
-gap: 10px;
-
-margin-top: 18px;
-
-}
-.modal button {
-
-flex: 1;
-
-padding: 12px;
-
-border: 1px solid var(--line);
-
-background: var(--bg);
-
-color: var(--text);
-
-border-radius: 8px;
-
-cursor: pointer;
-
-font-size: 13px;
-
-font-weight: 600;
-
-transition: border-color 0.15s;
-
-}
-.modal button.report-btn {
-
-border-color: var(--down);
-
-color: var(--down);
-
-}
-.modal button:hover { border-color: var(--gold); }
-.modal .empty-state {
-
-color: var(--muted);
-
-font-family: var(--mono);
-
-font-size: 12px;
-
-text-align: center;
-
-padding: 24px 0;
-
-}
-
+  body.light {
+    --bg: #f5f6f4;
+    --panel: #ffffff;
+    --panel-raised: #ffffff;
+    --line: #e3e6e1;
+    --text: #141815;
+    --muted: #6b7670;
+    --gold: #c9881f;
+    --green: #168a5f;
+    --down: #d6392b;
+    --blue: #0d3b66;
+  }
+  body { transition: background 0.2s ease, color 0.2s ease; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+  }
+  .stripe-band {
+    height: 4px;
+    background: linear-gradient(90deg, var(--green) 0%, var(--green) 33%, var(--gold) 33%, var(--gold) 66%, var(--down) 66%, var(--down) 100%);
+  }
+  header {
+    padding: 32px 40px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+  .brand h1 .accent { color: var(--gold); }
+  .brand .tagline { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .clock-box { text-align: right; font-family: var(--mono); }
+  .clock-box .time { font-size: 18px; font-weight: 600; color: var(--gold); }
+  .clock-box .date { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .theme-toggle {
+    margin-left: 16px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: border-color 0.15s;
+  }
+  .theme-toggle:hover { border-color: var(--gold); }
+  .summary-bar { display: flex; gap: 12px; padding: 24px 40px; }
+  .summary-cell {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary-cell::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
+  .summary-cell.up::before { background: var(--green); }
+  .summary-cell.down::before { background: var(--down); }
+  .summary-cell.total::before { background: var(--gold); }
+  .summary-cell .num { font-family: var(--mono); font-size: 36px; font-weight: 700; }
+  .summary-cell.up .num { color: var(--green); }
+  .summary-cell.down .num { color: var(--down); }
+  .summary-cell.total .num { color: var(--gold); }
+  .summary-cell .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+  main { padding: 8px 40px 40px; }
+  .category-block { margin-bottom: 32px; }
+  .category-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    margin-bottom: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .category-title::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover { transform: translateY(-2px); border-color: var(--muted); box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+  .card.up { box-shadow: inset 3px 0 0 var(--green); }
+  .card.down { box-shadow: inset 3px 0 0 var(--down); }
+  .card .row { display: flex; justify-content: space-between; align-items: center; }
+  .card .name { font-size: 14px; font-weight: 600; }
+  .card .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .card.up .dot { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .card.down .dot { background: var(--down); box-shadow: 0 0 8px var(--down); }
+  .card .meta { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 8px; }
+  .card .sparkline { width: 100%; height: 28px; margin-top: 8px; }
+  .card .sparkline svg { width: 100%; height: 100%; display: block; }
+  .card-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    object-fit: contain;
+    background: var(--bg);
+    padding: 2px;
+  }
+  .card-logo-fallback {
+    width: 24px;
+    height: 24px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    background: var(--gold);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  footer {
+    text-align: center;
+    padding: 28px;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: var(--mono);
+    border-top: 1px solid var(--line);
+  }
+  .loading { color: var(--muted); font-family: var(--mono); padding: 60px; text-align: center; font-size: 14px; }
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--panel-raised);
+    border: 1px solid var(--gold);
+    color: var(--text);
+    padding: 14px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--panel-raised);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px;
+    width: 500px;
+    max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 18px; }
+  .modal .chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 130px;
+    margin: 16px 0;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 4px;
+  }
+  .modal .bar { flex: 1; background: var(--gold); min-height: 2px; border-radius: 3px 3px 0 0; transition: background 0.15s; }
+  .modal .bar:hover { background: var(--green); }
+  .modal .bar-label { font-family: var(--mono); font-size: 9px; color: var(--muted); text-align: center; margin-top: 4px; }
+  .modal .chart-wrap { display: flex; flex-direction: column; }
+  .modal .actions { display: flex; gap: 10px; margin-top: 18px; }
+  .modal button {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: border-color 0.15s;
+  }
+  .modal button.report-btn { border-color: var(--down); color: var(--down); }
+  .modal button:hover { border-color: var(--gold); }
+  .modal .empty-state { color: var(--muted); font-family: var(--mono); font-size: 12px; text-align: center; padding: 24px 0; }
 </style>
 </head>
 <body>
@@ -527,9 +237,12 @@ padding: 24px 0;
     <h1>TZ <span class="accent">STATUS</span></h1>
     <div class="tagline">Real-time outage tracking for Tanzania's essential services</div>
   </div>
-  <div class="clock-box">
-    <div class="time" id="clockTime">--:--:--</div>
-    <div class="date" id="clockDate">--</div>
+  <div style="display: flex; align-items: center;">
+    <div class="clock-box">
+      <div class="time" id="clockTime">--:--:--</div>
+      <div class="date" id="clockDate">--</div>
+    </div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Dark</button>
   </div>
 </header>
 <div class="summary-bar">
@@ -565,177 +278,348 @@ padding: 24px 0;
 </div>
 <script>
   const API_BASE = "http://127.0.0.1:8000";
+function toggleTheme() {
 
-  function updateClock() {
-    const now = new Date();
-    document.getElementById("clockTime").textContent = now.toLocaleTimeString();
-    document.getElementById("clockDate").textContent = now.toLocaleDateString(undefined, {
-      weekday: 'short', month: 'short', day: 'numeric'
-    });
+const body = document.body;
+
+const btn = document.getElementById("themeToggle");
+
+body.classList.toggle("light");
+
+btn.textContent = body.classList.contains("light") ? "☀️ Light" : "🌙 Dark";
+
+}
+function updateClock() {
+
+const now = new Date();
+
+document.getElementById("clockTime").textContent = now.toLocaleTimeString();
+
+document.getElementById("clockDate").textContent = now.toLocaleDateString(undefined, {
+
+weekday: 'short', month: 'short', day: 'numeric'
+
+});
+
+}
+
+setInterval(updateClock, 1000);
+
+updateClock();
+function showToast(msg) {
+
+const t = document.getElementById("toast");
+
+t.textContent = msg;
+
+t.classList.add("show");
+
+setTimeout(() => t.classList.remove("show"), 2500);
+
+}
+async function reportDown(serviceId, name) {
+
+try {
+
+const res = await fetch(`${API_BASE}/report/${serviceId}`, { method: "POST" });
+
+showToast(res.ok ? `Reported: ${name}` : "Report failed");
+
+} catch (e) {
+
+showToast("Could not reach server");
+
+}
+
+}
+function formatTime(iso) {
+
+if (!iso) return "never checked";
+
+return new Date(iso).toLocaleTimeString();
+
+}
+let modalRefreshInterval = null;
+async function loadModalData(id) {
+
+try {
+
+const res = await fetch(`${API_BASE}/analytics/${id}/hourly?days=7`);
+
+const data = await res.json();
+
+renderChart(data.hourly);
+
+} catch (e) {
+
+document.getElementById("modalContent").innerHTML = `<div class="empty-state">Couldn\'t load analytics.</div>`;
+
+}
+
+}
+async function openModal(id, name) {
+
+document.getElementById("modalTitle").textContent = name;
+
+document.getElementById("modalReportBtn").onclick = () => { reportDown(id, name); closeModal(); };
+
+document.getElementById("modalOverlay").classList.add("show");
+
+document.getElementById("modalContent").innerHTML = `<div class="empty-state">Loading hourly data...</div>`;
+
+await loadModalData(id);
+
+modalRefreshInterval = setInterval(() => loadModalData(id), 15000);
+
+}
+function closeModal() {
+
+document.getElementById("modalOverlay").classList.remove("show");
+
+if (modalRefreshInterval) { clearInterval(modalRefreshInterval); modalRefreshInterval = null; }
+
+}
+
+function renderChart(hourly) {
+  const content = document.getElementById("modalContent");
+
+  if (!hourly || hourly.length === 0) {
+    content.innerHTML = `<div class="empty-state">Not enough data yet. Check back after a few hours of monitoring.</div>`;
+    return;
   }
-  setInterval(updateClock, 1000);
-  updateClock();
 
-  function showToast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 2500);
-  }
+  const maxResponse = Math.max(...hourly.map(h => h.avg_response_ms || 0), 1);
+  const totalSamples = hourly.reduce((sum, h) => sum + (h.sample_count || 0), 0);
 
-  async function reportDown(serviceId, name) {
-    try {
-      const res = await fetch(`${API_BASE}/report/${serviceId}`, { method: "POST" });
-      if (res.ok) {
-        showToast(`Reported: ${name}`);
-      } else {
-        showToast("Report failed");
-      }
-    } catch (e) {
-      showToast("Could not reach server");
-    }
-  }
+  let bars = "";
 
-  function formatTime(iso) {
-    if (!iso) return "never checked";
-    const d = new Date(iso);
-    return d.toLocaleTimeString();
-  }
+  hourly.forEach(h => {
+    const heightPct = h.avg_response_ms
+      ? (h.avg_response_ms / maxResponse) * 100
+      : 2;
 
-  let currentModalServiceId = null;
-  let modalRefreshInterval = null;
-
-  async function loadModalData(id) {
-    try {
-      const res = await fetch(`${API_BASE}/analytics/${id}/hourly?days=7`);
-      const data = await res.json();
-      renderChart(data.hourly);
-    } catch (e) {
-      document.getElementById("modalContent").innerHTML =
-        `<div class="empty-state">Couldn't load analytics.</div>`;
-    }
-  }
-
-  async function openModal(id, name) {
-    currentModalServiceId = id;
-    document.getElementById("modalTitle").textContent = name;
-    document.getElementById("modalReportBtn").onclick = () => {
-      reportDown(id, name);
-      closeModal();
-    };
-    document.getElementById("modalOverlay").classList.add("show");
-    document.getElementById("modalContent").innerHTML =
-      `<div class="empty-state">Loading hourly data...</div>`;
-
-    await loadModalData(id);
-    modalRefreshInterval = setInterval(() => loadModalData(id), 15000);
-  }
-
-  function closeModal() {
-    document.getElementById("modalOverlay").classList.remove("show");
-    if (modalRefreshInterval) {
-      clearInterval(modalRefreshInterval);
-      modalRefreshInterval = null;
-    }
-  }
-
-  function renderChart(hourly) {
-    const content = document.getElementById("modalContent");
-
-    if (!hourly || hourly.length === 0) {
-      content.innerHTML = `<div class="empty-state">Not enough data yet. Check back after a few hours of monitoring.</div>`;
-      return;
-    }
-
-    const maxResponse = Math.max(...hourly.map(h => h.avg_response_ms || 0), 1);
-    const totalSamples = hourly.reduce((sum, h) => sum + h.sample_count, 0);
-
-    let bars = "";
-    hourly.forEach(h => {
-      const heightPct = h.avg_response_ms ? (h.avg_response_ms / maxResponse) * 100 : 2;
-      bars += `
-        <div class="chart-wrap" style="flex:1">
-          <div class="bar" style="height:${heightPct}%" title="${h.avg_response_ms}ms, ${h.uptime_pct}% uptime"></div>
-          <div class="bar-label">${h.hour}h</div>
+    bars += `
+      <div class="chart-wrap" style="flex:1">
+        <div class="bar"
+             style="height:${heightPct}%"
+             title="${h.avg_response_ms}ms, ${h.uptime_pct}% uptime">
         </div>
-      `;
-    });
+        <div class="bar-label">${h.hour}h</div>
+      </div>
+    `;
+  });
 
-    content.innerHTML = `
-      <div style="font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 8px;">
-        Avg response time by hour (last 7 days) &middot; ${totalSamples} samples collected
-      </div>
-      <div class="chart">${bars}</div>
-      <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 8px;">
-        Hover bars for exact values &middot; taller = slower
-      </div>
+  content.innerHTML = `
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--muted); margin-bottom: 8px;">
+      Avg response time by hour (last 7 days) &middot; ${totalSamples} samples collected
+    </div>
+    <div class="chart">${bars}</div>
+    <div style="font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 8px;">
+      Hover bars for exact values &middot; taller = slower
+    </div>
+  `;
+}
+
+function buildSparklineSVG(values, color) {
+  if (!values || values.length < 2) {
+    return `
+      <svg viewBox="0 0 100 28">
+        <line x1="0" y1="14" x2="100" y2="14"
+              stroke="${color}" stroke-width="1" opacity="0.3"/>
+      </svg>
     `;
   }
 
-  async function loadStatus() {
-    try {
-      const res = await fetch(`${API_BASE}/status`);
-      const data = await res.json();
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = max - min || 1;
+  const stepX = 100 / (values.length - 1);
 
-      const upCount = data.filter(s => s.is_up === true).length;
-      const downCount = data.filter(s => s.is_up === false).length;
+  const points = values
+    .map((v, i) => `${i * stepX},${26 - ((v - min) / range) * 24}`)
+    .join(" ");
 
-      document.getElementById("upCount").textContent = upCount;
-      document.getElementById("downCount").textContent = downCount;
-      document.getElementById("totalCount").textContent = data.length;
+  return `
+    <svg viewBox="0 0 100 28" preserveAspectRatio="none">
+      <polyline points="${points}"
+                fill="none"
+                stroke="${color}"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+    </svg>
+  `;
+}
 
-      const categories = {};
-      data.forEach(s => {
-        if (!categories[s.category]) categories[s.category] = [];
-        categories[s.category].push(s);
-      });
+async function loadSparkline(id) {
+  try {
+    const res = await fetch(`${API_BASE}/analytics/${id}/hourly?days=7`);
+    const data = await res.json();
 
-      const categoryLabels = {
-        government: "Government",
-        bank: "Banks",
-        telecom: "Telecom Networks",
-        mobile_money: "Mobile Money",
-        app: "Apps & E-commerce"
-      };
+    const el = document.getElementById(`spark-${id}`);
+    if (!el) return;
 
-      let html = "";
-      for (const [cat, services] of Object.entries(categories)) {
-        html += `<div class="category-block">`;
-        html += `<div class="category-title">${categoryLabels[cat] || cat}</div>`;
-        html += `<div class="grid">`;
-        services.forEach(s => {
-          const statusClass = s.is_up === true ? "up" : s.is_up === false ? "down" : "";
-          html += `
-            <div class="card ${statusClass}" data-id="${s.id}" data-name="${s.service}">
-              <div class="row">
-                <div class="name">${s.service}</div>
-                <div class="dot"></div>
-              </div>
-              <div class="meta">last check: ${formatTime(s.last_checked)}</div>
-            </div>
-          `;
-        });
-        html += `</div></div>`;
-      }
-
-      document.getElementById("main").innerHTML = html;
-
-      document.querySelectorAll(".card").forEach(card => {
-        card.addEventListener("click", () => {
-          const id = card.getAttribute("data-id");
-          const name = card.getAttribute("data-name");
-          openModal(id, name);
-        });
-      });
-
-    } catch (e) {
-      document.getElementById("main").innerHTML =
-        `<div class="loading">Can't reach the API. Is the server running at ${API_BASE}?</div>`;
+    if (!data.hourly || data.hourly.length === 0) {
+      el.innerHTML = "";
+      return;
     }
+
+    const values = data.hourly.map(h => h.avg_response_ms || 0);
+    const lastUp = data.hourly[data.hourly.length - 1]?.uptime_pct;
+
+    const color =
+      lastUp === 100 ? "var(--green)" :
+      lastUp > 0 ? "var(--gold)" :
+      "var(--down)";
+
+    el.innerHTML = buildSparklineSVG(values, color);
+  } catch (e) {}
+}
+
+const domainMap = {
+
+"NIDA": "nida.go.tz",
+
+"TRA": "tra.go.tz",
+
+"BRELA": "brela.go.tz",
+
+"HESLB": "heslb.go.tz",
+
+"eGA / Government Portal": "ega.go.tz",
+
+"NHIF": "nhif.or.tz",
+
+"NSSF": "nssf.go.tz",
+
+"TCRA": "tcra.go.tz",
+
+"Tanzania Railways Corporation": "trc.co.tz",
+
+"Ajira Portal": "ajira.go.tz",
+
+"CRDB Bank": "crdbbank.co.tz",
+
+"NMB Bank": "nmbbank.co.tz",
+
+"NBC Bank": "nbc.co.tz",
+
+"Equity Bank Tanzania": "equitygroupholdings.com",
+
+"Stanbic Bank Tanzania": "stanbicbank.co.tz",
+
+"DTB Tanzania": "dtbtanzania.com",
+
+"Exim Bank Tanzania": "eximbank-tz.com",
+
+"Akiba Commercial Bank": "akibabank.com",
+
+"Absa Bank Tanzania": "absa.co.tz",
+
+"Vodacom Tanzania": "vodacom.co.tz",
+
+"Airtel Tanzania": "airtel.co.tz",
+
+"TTCL": "ttcl.co.tz",
+
+"Yas (Tigo)": "yas.co.tz",
+
+"Halotel": "halotel.co.tz",
+
+"Zantel": "zantel.co.tz",
+
+"M-Pesa Tanzania": "vodacom.co.tz",
+
+"Mixx by Yas (Tigo Pesa)": "yas.co.tz",
+
+"Airtel Money": "airtel.co.tz",
+
+"Halopesa": "halotel.co.tz",
+
+"Selcom": "selcommobile.com",
+
+"Jumia Tanzania": "jumia.co.tz",
+
+"Kilimall Tanzania": "kilimall.co.tz"
+
+};
+function getFaviconUrl(serviceName) {
+
+const domain = domainMap[serviceName];
+
+if (!domain) return null;
+
+return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+
+}
+async function loadStatus() {
+
+try {
+
+const res = await fetch(`${API_BASE}/status`);
+
+const data = await res.json();
+  document.getElementById("upCount").textContent = data.filter(s => s.is_up === true).length;
+  document.getElementById("downCount").textContent = data.filter(s => s.is_up === false).length;
+  document.getElementById("totalCount").textContent = data.length;
+
+  const categories = {};
+  data.forEach(s => {
+    if (!categories[s.category]) categories[s.category] = [];
+    categories[s.category].push(s);
+  });
+
+  const categoryLabels = {
+    government: "Government",
+    bank: "Banks",
+    telecom: "Telecom Networks",
+    mobile_money: "Mobile Money",
+    app: "Apps & E-commerce"
+  };
+
+  let html = "";
+  for (const [cat, services] of Object.entries(categories)) {
+    html += `<div class="category-block"><div class="category-title">${categoryLabels[cat] || cat}</div><div class="grid">`;
+    services.forEach(s => {
+      const statusClass = s.is_up === true ? "up" : s.is_up === false ? "down" : "";
+      const favicon = getFaviconUrl(s.service);
+      const logoHtml = favicon
+        ? `<img src="${favicon}" class="card-logo" onerror="this.style.display='none'">`
+        : `<div class="card-logo-fallback">${s.service.charAt(0)}</div>`;
+      html += `
+        <div class="card ${statusClass}" data-id="${s.id}" data-name="${s.service}">
+          <div class="row">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              ${logoHtml}
+              <div class="name">${s.service}</div>
+            </div>
+            <div class="dot"></div>
+          </div>
+          <div class="meta">last check: ${formatTime(s.last_checked)}</div>
+          <div class="sparkline" id="spark-${s.id}"></div>
+        </div>
+      `;
+    });
+    html += `</div></div>`;
   }
 
-  loadStatus();
-  setInterval(loadStatus, 15000);
+  document.getElementById("main").innerHTML = html;
+  data.forEach(s => loadSparkline(s.id));
+
+  document.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", () => {
+      openModal(card.getAttribute("data-id"), card.getAttribute("data-name"));
+    });
+  });
+
+} catch (e) {
+  document.getElementById("main").innerHTML = `<div class="loading">Can't reach the API. Is the server running at ${API_BASE}?</div>`;
+}
+}
+loadStatus();
+
+setInterval(loadStatus, 15000);
+
 </script>
 </body>
 </html>
