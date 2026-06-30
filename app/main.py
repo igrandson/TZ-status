@@ -1,8 +1,10 @@
-from fastapi import FastAPI
-from contextlib import asynccontextmanager
-from sqlmodel import Session, select
-from datetime import datetime, timedelta
+import os
 import asyncio
+from contextlib import asynccontextmanager
+from datetime import datetime, timedelta
+
+from fastapi import FastAPI
+from sqlmodel import Session, select
 
 from app.database import engine, init_db
 from app.models import Service, StatusCheck, OutageReport, ServiceComponent, ComponentCheck
@@ -142,9 +144,14 @@ app = FastAPI(title="TZ Status", lifespan=lifespan)
 
 from fastapi.middleware.cors import CORSMiddleware
 
+allowed_origins_raw = os.getenv("ALLOWED_ORIGINS", "*")
+allowed_origins = [origin.strip() for origin in allowed_origins_raw.split(",") if origin.strip()]
+allow_credentials = allowed_origins != ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
