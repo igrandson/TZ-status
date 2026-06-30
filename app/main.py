@@ -4,6 +4,8 @@ from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, select
 
 from app.database import engine, init_db
@@ -144,6 +146,8 @@ app = FastAPI(title="TZ Status", lifespan=lifespan)
 
 from fastapi.middleware.cors import CORSMiddleware
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 allowed_origins_raw = os.getenv("ALLOWED_ORIGINS", "*")
 allowed_origins = [origin.strip() for origin in allowed_origins_raw.split(",") if origin.strip()]
 allow_credentials = allowed_origins != ["*"]
@@ -159,7 +163,7 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return {"message": "TZ Status API running"}
+    return FileResponse("static/index.html")
 
 
 @app.get("/services")
