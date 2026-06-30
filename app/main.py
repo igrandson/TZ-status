@@ -5,13 +5,110 @@ from datetime import datetime, timedelta
 import asyncio
 
 from app.database import engine, init_db
-from app.models import Service, StatusCheck, OutageReport
+from app.models import Service, StatusCheck, OutageReport, ServiceComponent, ComponentCheck
 from app.monitor import run_monitor_loop
 from app.services_seed import SEED_SERVICES
 
 
+COMPONENT_SEEDS = {
+    "CRDB": [
+        {"name": "Website", "url": "https://crdbbank.co.tz", "weight": 0.10},
+        {"name": "Internet Banking", "url": "https://ib.crdbbank.com", "weight": 0.30},
+        {"name": "Mobile App", "url": None, "weight": 0.15},
+        {"name": "USSD", "url": None, "weight": 0.15},
+        {"name": "ATM Network", "url": None, "weight": 0.15},
+        {"name": "Card Payments", "url": None, "weight": 0.15},
+    ],
+    "NMB": [
+        {"name": "Website", "url": "https://www.nmbbank.co.tz", "weight": 0.10},
+        {"name": "Internet Banking", "url": None, "weight": 0.30},
+        {"name": "Mobile App", "url": None, "weight": 0.15},
+        {"name": "USSD", "url": None, "weight": 0.15},
+        {"name": "ATM Network", "url": None, "weight": 0.15},
+        {"name": "Card Payments", "url": None, "weight": 0.15},
+    ],
+    "Vodacom": [
+        {"name": "Website", "url": "https://www.vodacom.co.tz", "weight": 0.10},
+        {"name": "Voice", "url": None, "weight": 0.25},
+        {"name": "SMS", "url": None, "weight": 0.15},
+        {"name": "Internet", "url": None, "weight": 0.25},
+        {"name": "M-Pesa", "url": "https://www.vodacom.co.tz/m-pesa", "weight": 0.25},
+    ],
+    "NIDA": [
+        {"name": "Website", "url": "https://www.nida.go.tz", "weight": 0.30},
+        {"name": "Search Service", "url": None, "weight": 0.25},
+        {"name": "Verification", "url": None, "weight": 0.25},
+        {"name": "API", "url": None, "weight": 0.20},
+    ],
+}
+
+
 def seed_services():
     """Insert catalog services missing from the database (matched by URL)."""
+    with Session(engine) as session:
+        existing_urls = {
+            (s.url or "").rstrip("/").lower()
+            for s in session.exec(select(Service)).all()
+        }
+        existing_names = {s.name for s in session.exec(select(Service)).all()}
+        added = 0
+        for entry in SEED_SERVICES:
+            url_key = (entry.get("url") or "").rstrip("/").lower()
+            if url_key in existing_urls or entry["name"] in existing_names:
+                continue
+            session.add(Service(**entry))
+            existing_urls.add(url_key)
+            existing_names.add(entry["name"])
+            added += 1
+        if added:
+            session.commit()
+
+
+def seed_components():
+    with Session(engine) as session:
+        existing = session.exec(select(ServiceComponent)).first()
+        if existing:
+            return
+
+        for service_name, components in COMPONENT_SEEDS.items():
+            service = session.exec(
+                select(Service).where(Service.name == service_name)
+            ).first()
+            if not service:
+                continue
+            for comp in components:
+                component_type = comp.get("component_type")
+                if not component_type:
+                    name_key = (comp["name"] or "").lower()
+                    if "website" in name_key:
+                        component_type = "website"
+                    elif "mobile app" in name_key or "app" in name_key:
+                        component_type = "app"
+                    elif "ussd" in name_key:
+                        component_type = "ussd"
+                    elif "atm" in name_key:
+                        component_type = "atm"
+                    elif "card" in name_key or "payment" in name_key:
+                        component_type = "payment"
+                    elif "api" in name_key:
+                        component_type = "api"
+                    elif "voice" in name_key:
+                        component_type = "voice"
+                    elif "sms" in name_key:
+                        component_type = "sms"
+                    elif "internet" in name_key:
+                        component_type = "internet"
+                    else:
+                        component_type = "other"
+
+                session.add(ServiceComponent(
+                    service_id=service.id,
+                    name=comp["name"],
+                    component_type=component_type,
+                    url=comp["url"],
+                    weight=comp["weight"],
+                ))
+        session.commit()
     with Session(engine) as session:
         existing_urls = {
             (s.url or "").rstrip("/").lower()
@@ -35,6 +132,7 @@ def seed_services():
 async def lifespan(app: FastAPI):
     init_db()
     seed_services()
+    seed_components()
     monitor_task = asyncio.create_task(run_monitor_loop(interval_seconds=60))
     yield
     monitor_task.cancel()
